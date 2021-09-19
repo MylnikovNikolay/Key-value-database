@@ -1,42 +1,155 @@
 
 fun main(args: Array<String>) {
-    val databases: MutableMap <String, Database>
+    val databases = Databases(mutableMapOf())
     while (true) {
         val input = readLine() ?: break
         val command = input.trim().split("[ ]+".toRegex())
-        println(command)
-        when (command[0]) {
-            "get" -> getByKey(command.drop(1))
-            "Get" -> getByValue(command.drop(1))
-            "add" -> addByKey(command.drop(1), false)
-            "Add" -> addByKey(command.drop(1), true)
-            "delete" -> deleteByKey(command.drop(1))
-            "Delete" -> deleteByValue(command.drop(1))
-            "merge" -> mergeTwoDatabases(command.drop(1), false)
-            "Merge" -> mergeTwoDatabases(command.drop(1), true)
-            "open" -> {
-                TODO()
-            }
-            "close" -> {
-                TODO()
-            }
-            "Close" -> { // close without saving
-                TODO()
-            }
-            "exit" -> break
-            else -> {
-                println("incorrect input")
-            }
+
+        if (command.isEmpty()) {
+            incorrectInput()
+            continue
+        }
+        if (command[0] == "exit") {
+            break
+        } else {
+            databases.runCommand(command)
         }
     }
 }
 
-data class Database(val filepath: String, val data: MutableMap <String, String>)
+fun incorrectInput() {
+    println("incorrect input")
+}
 
-fun getByKey(command: List<String>) { TODO() }
-fun getByValue(command: List<String>) { TODO() }
-fun addByKey(command: List<String>, overwrite: Boolean) { TODO() }
-fun deleteByKey(command: List<String>) { TODO() }
-fun deleteByValue(command: List<String>) { TODO() }
-fun mergeTwoDatabases(command: List<String>, overwrite: Boolean) { TODO() }
-fun saveDatabaseToFile(command: List<String>) { TODO() }
+data class Databases(val databases: MutableMap<String, Database>) {
+
+    fun runCommand(args: List<String>) {
+        val command = args[0]
+        val arguments = args.drop(1)
+
+        when (command) {
+            "exist" -> {
+                println(
+                    if (exist(args))
+                        "Yes"
+                    else
+                        "No"
+                )
+            }
+
+            "create" -> createNew(arguments)
+
+            "delete" -> delete(arguments)
+
+            "open" -> openFromFile(arguments)
+
+            "close" -> {
+                saveToFile(arguments)
+                close(arguments)
+            }
+
+            "Close" -> close(arguments)
+
+            "merge" -> mergeTwoDatabases(arguments, false)
+
+            "Merge" -> mergeTwoDatabases(arguments, true)
+
+            else -> {
+                if (arguments.isEmpty()) {
+                    incorrectInput()
+                    return
+                }
+                val database = arguments.first()
+                if (exist(listOf(database))) {
+                    databases[database]?.runCommand(arguments.drop(1))
+                } else {
+                    println("database doesn't exist")
+                }
+            }
+        }
+    }
+
+    private fun exist(args: List<String>): Boolean {
+        TODO()
+    }
+
+    private fun createNew(args: List<String>) {
+        TODO()
+    }
+
+    private fun delete(args: List<String>) {
+        TODO()
+    }
+
+    private fun openFromFile(args: List<String>) {
+        TODO()
+    }
+
+    private fun saveToFile(args: List<String>) {
+        TODO()
+    }
+
+    private fun close(args: List<String>) {
+        TODO()
+    }
+
+    private fun mergeTwoDatabases(args: List<String>, overwrite: Boolean) {
+        TODO()
+    }
+}
+
+data class Database(val filepath: String, val data: MutableMap <String, String>) {
+
+    fun runCommand(args: List<String>) {
+        val command = args[0]
+        val arguments = args.drop(1)
+        when (command) {
+            "contains" -> {
+                containsKey(arguments)
+            }
+            "get" -> {
+                getByKey(arguments)
+            }
+            "Get" -> {
+                getKeysByValue(arguments)
+            }
+            "add" -> {
+                addByKey(arguments, false)
+            }
+            "Add" -> {
+                addByKey(arguments, true)
+            }
+            "delete" -> {
+                deleteByKey(arguments)
+            }
+            "Delete" -> {
+                deleteByValue(arguments)
+            }
+            else -> println("incorrect input")
+        }
+    }
+
+    private fun containsKey(args: List<String>) {
+        TODO()
+    }
+
+    private fun getByKey(args: List<String>) {
+        TODO()
+    }
+
+    private fun getKeysByValue(args: List<String>) {
+        TODO()
+    }
+
+    private fun addByKey(args: List<String>, overwrite: Boolean) {
+        TODO()
+    }
+
+    private fun deleteByKey(args: List<String>) {
+        TODO()
+    }
+
+    private fun deleteByValue(args: List<String>) {
+        TODO()
+    }
+}

@@ -7,14 +7,7 @@ data class Databases(val databases: MutableMap<String, Database>) {
         val arguments = args.drop(1)
 
         when (command) {
-            "exist" -> {
-                println(
-                    if (exist(arguments))
-                        "Yes"
-                    else
-                        "No"
-                )
-            }
+            "exist" -> printExist(arguments)
 
             "create" -> createNew(arguments)
 
@@ -38,7 +31,7 @@ data class Databases(val databases: MutableMap<String, Database>) {
                 }
                 val database = arguments.first()
                 if (exist(database)) {
-                    databases[database]?.runCommand(arguments.drop(1))
+                    databases[database]!!.runCommand(listOf(command) + arguments.drop(1))
                 } else {
                     notExistErrorMessage(database)
                 }
@@ -46,11 +39,20 @@ data class Databases(val databases: MutableMap<String, Database>) {
         }
     }
 
-    private fun exist(args: List<String>): Boolean {
+    private fun printExist(args: List<String>) {
         if (args.size != 1) {
             incorrectInputErrorMessage()
-            return false
+            return
         }
+        println(
+            if (exist(args[0]))
+                "Yes"
+            else
+                "No"
+        )
+    }
+
+    private fun exist(args: List<String>): Boolean {
         return databases.containsKey(args[0])
     }
 
@@ -62,10 +64,13 @@ data class Databases(val databases: MutableMap<String, Database>) {
             return
         }
         val databaseName = args[0]
+        if (databases.containsKey(databaseName)) {
+            println("database '$databaseName' already exist")
+        }
         val filepath = args[1]
         val file = File(filepath)
         if (!file.createNewFile()) {
-            println("$filepath already exist")
+            println("file '$filepath' already exist")
             return
         }
         databases[databaseName] = Database(filepath, mutableMapOf())
@@ -111,7 +116,7 @@ data class Databases(val databases: MutableMap<String, Database>) {
     }
 
     private fun saveToFile(args: List<String>) {
-        if (args.size != 2) {
+        if (args.size != 1) {
             incorrectInputErrorMessage()
             return
         }
@@ -120,7 +125,7 @@ data class Databases(val databases: MutableMap<String, Database>) {
             notExistErrorMessage(databaseName)
             return
         }
-        val file = File(args[1])
+        val file = File(databases[args[0]]!!.filepath)
         if (!file.exists()) {
             println("file doesn't exist")
             return

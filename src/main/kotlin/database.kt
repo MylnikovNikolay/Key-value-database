@@ -1,4 +1,4 @@
-val listOfCommands = listOf("contains", "get", "Get", "add", "Add", "delete", "Delete")
+val listOfCommands = listOf("contains", "get", "Get", "add", "delete", "Delete")
 
 data class Database(val filepath: String, val data: MutableMap <String, String>) {
 

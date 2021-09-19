@@ -1,3 +1,4 @@
+import java.io.File
 
 fun main(args: Array<String>) {
     val databases = Databases(mutableMapOf())
@@ -6,7 +7,7 @@ fun main(args: Array<String>) {
         val command = input.trim().split("[ ]+".toRegex())
 
         if (command.isEmpty()) {
-            incorrectInput()
+            incorrectInputErrorMessage()
             continue
         }
         if (command[0] == "exit") {
@@ -17,8 +18,16 @@ fun main(args: Array<String>) {
     }
 }
 
-fun incorrectInput() {
+fun incorrectInputErrorMessage() {
     println("incorrect input")
+}
+
+fun notExistErrorMessage(name: String) {
+    println("database '${name}' doesn't exist")
+}
+
+fun notExistErrorMessage(name: List<String>) {
+    println("database '${name[0]}' doesn't exist")
 }
 
 data class Databases(val databases: MutableMap<String, Database>) {
@@ -50,35 +59,59 @@ data class Databases(val databases: MutableMap<String, Database>) {
 
             "Close" -> close(arguments)
 
-            "merge" -> mergeTwoDatabases(arguments, false)
-
-            "Merge" -> mergeTwoDatabases(arguments, true)
+            "merge" -> mergeTwoDatabases(arguments)
 
             else -> {
                 if (arguments.isEmpty()) {
-                    incorrectInput()
+                    incorrectInputErrorMessage()
                     return
                 }
                 val database = arguments.first()
-                if (exist(listOf(database))) {
+                if (exist(database)) {
                     databases[database]?.runCommand(arguments.drop(1))
                 } else {
-                    println("database doesn't exist")
+                    notExistErrorMessage(database)
                 }
             }
         }
     }
 
     private fun exist(args: List<String>): Boolean {
-        TODO()
+        if (args.size != 1) {
+            incorrectInputErrorMessage()
+            return false
+        }
+        return databases.containsKey(args[0])
     }
 
+    private fun exist(databaseName: String): Boolean = exist(listOf(databaseName))
+
     private fun createNew(args: List<String>) {
-        TODO()
+        if (args.size != 2) {
+            incorrectInputErrorMessage()
+            return
+        }
+        val databaseName = args[0]
+        val filepath = args[1]
+        val file = File(filepath)
+        if (!file.createNewFile()) {
+            println("$filepath already exist")
+            return
+        }
+        databases[databaseName] = Database(filepath, mutableMapOf())
     }
 
     private fun delete(args: List<String>) {
-        TODO()
+        if (args.size != 1) {
+            incorrectInputErrorMessage()
+            return
+        }
+        if (!exist(args)) {
+            notExistErrorMessage(args)
+            return
+        }
+        val file = File(databases[args[0]]!!.filepath)
+        file.delete()
     }
 
     private fun openFromFile(args: List<String>) {
@@ -90,11 +123,29 @@ data class Databases(val databases: MutableMap<String, Database>) {
     }
 
     private fun close(args: List<String>) {
-        TODO()
+        if (args.size != 1) {
+            incorrectInputErrorMessage()
+            return
+        }
+        if (!exist(args)) {
+            notExistErrorMessage(args)
+            return
+        }
+        databases.remove(args[0])
     }
 
-    private fun mergeTwoDatabases(args: List<String>, overwrite: Boolean) {
-        TODO()
+    private fun mergeTwoDatabases(args: List<String>) {
+        if (args.size != 2) {
+            incorrectInputErrorMessage()
+            return
+        }
+        if (!exist(args[0])) {
+            notExistErrorMessage(args[0])
+        }
+        if (!exist(args[1])) {
+            notExistErrorMessage(args[1])
+        }
+        databases[args[0]]!!.data += databases[args[1]]!!.data
     }
 }
 

@@ -13,13 +13,10 @@ data class Database(val filepath: String, val data: MutableMap <String, String>)
                 getByKey(arguments)
             }
             "Get" -> {
-                getKeysByValue(arguments)
+                printKeysByValue(arguments)
             }
             "add" -> {
-                addByKey(arguments, false)
-            }
-            "Add" -> {
-                addByKey(arguments, true)
+                addByKey(arguments)
             }
             "delete" -> {
                 deleteByKey(arguments)
@@ -32,26 +29,73 @@ data class Database(val filepath: String, val data: MutableMap <String, String>)
     }
 
     private fun containsKey(args: List<String>) {
-        TODO()
+        if (args.size != 1) {
+            incorrectInputErrorMessage()
+            return
+        }
+        println(
+            if (data.containsKey(args[0]))
+                "Yes"
+            else
+                "No"
+        )
     }
 
     private fun getByKey(args: List<String>) {
-        TODO()
+        if (args.size != 1) {
+            incorrectInputErrorMessage()
+            return
+        }
+        if (!data.containsKey(args[0])) {
+            println("key doesn't exist")
+            return
+        }
+        println(data[args[0]])
     }
 
-    private fun getKeysByValue(args: List<String>) {
-        TODO()
+    private fun getKeysByValue(value: String): List<String> {
+        val output = mutableListOf<String>()
+        for (entry in data) {
+            if (entry.value == value) {
+                output.add(entry.key)
+            }
+        }
+        return output
     }
 
-    private fun addByKey(args: List<String>, overwrite: Boolean) {
-        TODO()
+    private fun printKeysByValue(args: List<String>) {
+        if (args.size != 1) {
+            incorrectInputErrorMessage()
+            return
+        }
+        val output = getKeysByValue(args[0])
+        println(output.joinToString(", "))
+    }
+
+    private fun addByKey(args: List<String>) {
+        if (args.size != 2) {
+            incorrectInputErrorMessage()
+            return
+        }
+        data[args[0]] = args[1]
     }
 
     private fun deleteByKey(args: List<String>) {
-        TODO()
+        if (args.size != 1) {
+            incorrectInputErrorMessage()
+            return
+        }
+        data.remove(args[0])
     }
 
     private fun deleteByValue(args: List<String>) {
-        TODO()
+        if (args.size != 1) {
+            incorrectInputErrorMessage()
+            return
+        }
+        val keys = getKeysByValue(args[0])
+        for (key in keys) {
+            data.remove(key)
+        }
     }
 }

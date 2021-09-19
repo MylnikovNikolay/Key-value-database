@@ -102,7 +102,7 @@ data class Databases(val databases: MutableMap<String, Database>) {
             return
         }
 
-        createNew(args)
+        databases[databaseName] = Database(filepath, mutableMapOf())
         val input = file.readLines()
         for (line in input) {
             val values = line.split(' ')

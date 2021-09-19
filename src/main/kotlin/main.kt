@@ -1,6 +1,5 @@
-import java.io.File
 
-fun main(args: Array<String>) {
+fun main() {
     val databases = Databases(mutableMapOf())
     while (true) {
         val input = readLine() ?: break

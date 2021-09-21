@@ -55,9 +55,9 @@ data class Database(val filepath: String, val data: MutableMap <String, String>)
 
     private fun getKeysByValue(value: String): List<String> {
         val output = mutableListOf<String>()
-        for (entry in data) {
-            if (entry.value == value) {
-                output.add(entry.key)
+        data.forEach {
+            if (it.value == value) {
+                output.add(it.key)
             }
         }
         return output
@@ -94,8 +94,8 @@ data class Database(val filepath: String, val data: MutableMap <String, String>)
             return
         }
         val keys = getKeysByValue(args[0])
-        for (key in keys) {
-            data.remove(key)
+        keys.forEach {
+            data.remove(it)
         }
     }
 }

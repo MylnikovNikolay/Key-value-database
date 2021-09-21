@@ -108,9 +108,8 @@ data class Databases(val databases: MutableMap<String, Database>) {
         }
 
         databases[databaseName] = Database(filepath, mutableMapOf())
-        val input = file.readLines()
-        for (line in input) {
-            val values = line.split(' ')
+        file.forEachLine {
+            val values = it.split(' ')
             databases[databaseName]!!.data[values[0]] = values[1]
         }
     }
@@ -130,14 +129,10 @@ data class Databases(val databases: MutableMap<String, Database>) {
             println("file doesn't exist")
             return
         }
-        val output = StringBuilder()
-        for (entry in databases[databaseName]!!.data) {
-            output.append(entry.key)
-                  .append(' ')
-                  .append(entry.value)
-                  .append('\n')
+
+        databases[databaseName]!!.data.forEach {
+            file.appendText("${it.key} ${it.value}\n")
         }
-        file.writeText(output.toString())
     }
 
     private fun close(args: List<String>) {

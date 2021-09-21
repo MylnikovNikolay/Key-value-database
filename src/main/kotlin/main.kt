@@ -26,5 +26,5 @@ fun notExistErrorMessage(name: String) {
 }
 
 fun notExistErrorMessage(name: List<String>) {
-    println("database '${name[0]}' doesn't exist")
+    notExistErrorMessage(name[0])
 }

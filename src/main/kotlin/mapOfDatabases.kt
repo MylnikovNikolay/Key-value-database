@@ -184,9 +184,11 @@ data class MapOfDatabases(val databases: MutableMap<String, Database>) {
         }
         if (!exist(args[0])) {
             notExistErrorMessage(args[0])
+            return
         }
         if (!exist(args[1])) {
             notExistErrorMessage(args[1])
+            return
         }
         databases[args[0]]!!.data += databases[args[1]]!!.data
     }

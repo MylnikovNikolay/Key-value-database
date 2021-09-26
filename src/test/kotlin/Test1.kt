@@ -162,4 +162,34 @@ internal class Test1 {
 
         assertEquals(check.toString().trim(), stream.toString().trim())
     }
+
+    @Test
+    fun testBig() {
+        val entries = 1000000
+        val testDBs = MapOfDatabases(mutableMapOf())
+        testDBs.runCommand(splitInput("create a test1"))
+        testDBs.runCommand(splitInput("create b test2"))
+        repeat(entries){
+            testDBs.runCommand(splitInput("add a $it $it"))
+            testDBs.runCommand(splitInput("add b ${it+entries} ${it+entries}"))
+        }
+
+        testDBs.let {
+            it.runCommand(splitInput("contains a 13021"))
+            it.runCommand(splitInput("contains b ${21421 + entries}"))
+
+            it.runCommand(splitInput("merge a b"))
+            it.runCommand(splitInput("contains a 13021"))
+            it.runCommand(splitInput("contains a ${21421 + entries}"))
+
+            it.runCommand(splitInput("deleteAll"))
+        }
+
+        assertEquals("""
+            Yes
+            Yes
+            Yes
+            Yes
+        """.trimIndent(), stream.toString().trim())
+    }
 }

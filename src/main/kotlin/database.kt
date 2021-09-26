@@ -1,5 +1,3 @@
-val listOfCommands = listOf("contains", "get", "Get", "add", "delete", "Delete")
-
 data class Database(val filepath: String, val data: MutableMap <String, String>) {
 
     fun runCommand(args: List<String>) {
@@ -18,11 +16,11 @@ data class Database(val filepath: String, val data: MutableMap <String, String>)
             "add" -> {
                 addByKey(arguments)
             }
-            "delete" -> {
-                deleteByKey(arguments)
+            "erase" -> {
+                eraseByKey(arguments)
             }
-            "Delete" -> {
-                deleteByValue(arguments)
+            "Erase" -> {
+                eraseByValue(arguments)
             }
             else -> incorrectInputErrorMessage()
         }
@@ -80,7 +78,7 @@ data class Database(val filepath: String, val data: MutableMap <String, String>)
         data[args[0]] = args[1]
     }
 
-    private fun deleteByKey(args: List<String>) {
+    private fun eraseByKey(args: List<String>) {
         if (args.size != 1) {
             incorrectInputErrorMessage()
             return
@@ -88,7 +86,7 @@ data class Database(val filepath: String, val data: MutableMap <String, String>)
         data.remove(args[0])
     }
 
-    private fun deleteByValue(args: List<String>) {
+    private fun eraseByValue(args: List<String>) {
         if (args.size != 1) {
             incorrectInputErrorMessage()
             return

@@ -1,20 +1,31 @@
 
 fun main() {
-    val databases = Databases(mutableMapOf())
+    val mapOfDatabases = MapOfDatabases(mutableMapOf())
     while (true) {
         val input = readLine() ?: break
-        val command = input.trim().split("[ ]+".toRegex())
-
-        if (command.isEmpty()) {
-            incorrectInputErrorMessage()
-            continue
-        }
-        if (command[0] == "exit") {
+        if (runCommand(input, mapOfDatabases)) {
             break
-        } else {
-            databases.runCommand(command)
         }
     }
+}
+
+fun runCommand(input: String, mapOfDatabases: MapOfDatabases): Boolean {
+    val command = splitInput(input)
+
+    if (command[0] == "exit") {
+        if (mapOfDatabases.databases.isNotEmpty()) {
+            println("Some databases are still open")
+            return false
+        }
+        return true
+    } else {
+        mapOfDatabases.runCommand(command)
+    }
+    return false
+}
+
+fun splitInput(input: String): List<String> {
+    return input.trim().split("[ ]+".toRegex())
 }
 
 fun incorrectInputErrorMessage() {

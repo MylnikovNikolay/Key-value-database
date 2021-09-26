@@ -1,6 +1,8 @@
 import java.io.File
+import java.lang.Integer.max
 
-data class Databases(val databases: MutableMap<String, Database>) {
+data class MapOfDatabases(val databases: MutableMap<String, Database>) {
+    private val listOfCommands = listOf("contains", "get", "Get", "add", "erase", "Erase")
 
     fun runCommand(args: List<String>) {
         val command = args[0]
@@ -13,6 +15,8 @@ data class Databases(val databases: MutableMap<String, Database>) {
 
             "delete" -> delete(arguments)
 
+            "deleteAll" -> deleteAll()
+
             "open" -> openFromFile(arguments)
 
             "close" -> {
@@ -22,7 +26,16 @@ data class Databases(val databases: MutableMap<String, Database>) {
 
             "Close" -> close(arguments)
 
+            "closeAll" -> {
+                saveAll()
+                closeAll()
+            }
+
+            "CloseAll" -> closeAll()
+
             "merge" -> mergeTwoDatabases(arguments)
+
+            "list" -> printAllOpenDB()
 
             else -> {
                 if (arguments.isEmpty() || command !in listOfCommands) {
@@ -30,11 +43,8 @@ data class Databases(val databases: MutableMap<String, Database>) {
                     return
                 }
                 val database = arguments.first()
-                if (exist(database)) {
-                    databases[database]!!.runCommand(listOf(command) + arguments.drop(1))
-                } else {
-                    notExistErrorMessage(database)
-                }
+                databases[database]?.runCommand(listOf(command) + arguments.drop(1))
+                    ?: notExistErrorMessage(database)
             }
         }
     }
@@ -90,6 +100,13 @@ data class Databases(val databases: MutableMap<String, Database>) {
         databases.remove(args[0])
     }
 
+    private fun deleteAll() {
+        val keys = databases.keys
+        for (database in keys) {
+            delete(listOf(database))
+        }
+    }
+
     private fun openFromFile(args: List<String>) {
         if (args.size != 2) {
             incorrectInputErrorMessage()
@@ -126,12 +143,18 @@ data class Databases(val databases: MutableMap<String, Database>) {
         }
         val file = File(databases[args[0]]!!.filepath)
         if (!file.exists()) {
-            println("file doesn't exist")
-            return
+            file.createNewFile()
         }
 
+        file.writeText("")
         databases[databaseName]!!.data.forEach {
             file.appendText("${it.key} ${it.value}\n")
+        }
+    }
+
+    private fun saveAll() {
+        databases.forEach {
+            saveToFile(listOf(it.key))
         }
     }
 
@@ -147,6 +170,13 @@ data class Databases(val databases: MutableMap<String, Database>) {
         databases.remove(args[0])
     }
 
+    private fun closeAll() {
+        val keys = databases.keys
+        for (database in keys) {
+            close(listOf(database))
+        }
+    }
+
     private fun mergeTwoDatabases(args: List<String>) {
         if (args.size != 2) {
             incorrectInputErrorMessage()
@@ -159,5 +189,25 @@ data class Databases(val databases: MutableMap<String, Database>) {
             notExistErrorMessage(args[1])
         }
         databases[args[0]]!!.data += databases[args[1]]!!.data
+    }
+
+    private fun printAllOpenDB() {
+        if (databases.isEmpty()) {
+            println("No open databases")
+            return
+        }
+        var maxLen = 0
+        databases.forEach {
+            maxLen = max(maxLen, it.key.length)
+        }
+        val sb = StringBuilder()
+        sb.append("Name:".padEnd(maxLen + 1))
+        sb.append("Filepath:\n")
+        databases.forEach {
+            sb.append(it.key.padEnd(maxLen + 1))
+            sb.append(it.value.filepath)
+            sb.append("\n")
+        }
+        print(sb.toString())
     }
 }

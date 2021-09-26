@@ -101,7 +101,7 @@ data class MapOfDatabases(val databases: MutableMap<String, Database>) {
     }
 
     private fun deleteAll() {
-        val keys = databases.keys
+        val keys = databases.keys.toList()
         for (database in keys) {
             delete(listOf(database))
         }
@@ -171,7 +171,7 @@ data class MapOfDatabases(val databases: MutableMap<String, Database>) {
     }
 
     private fun closeAll() {
-        val keys = databases.keys
+        val keys = databases.keys.toList()
         for (database in keys) {
             close(listOf(database))
         }
@@ -196,7 +196,7 @@ data class MapOfDatabases(val databases: MutableMap<String, Database>) {
             println("No open databases")
             return
         }
-        var maxLen = 0
+        var maxLen = 6
         databases.forEach {
             maxLen = max(maxLen, it.key.length)
         }

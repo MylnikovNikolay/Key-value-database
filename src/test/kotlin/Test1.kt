@@ -36,7 +36,7 @@ internal class Test1 {
         val testDBs = MapOfDatabases(mutableMapOf())
         testDBs.runCommand(splitInput("create a test"))
         runCommand("exit", testDBs)
-        assertEquals("Some databases are still open", stream.toString().trim())
+        assertEquals("some databases are still open", stream.toString().trim())
 
         testDBs.runCommand(splitInput("deleteAll"))
     }
@@ -150,9 +150,16 @@ internal class Test1 {
             it.runCommand(splitInput("contains a 3"))
             check.append("Yes\n")
 
+            it.runCommand(splitInput("entries a"))
+            check.append("""
+                2 -> 2
+                3 -> 2
+                
+            """.trimIndent())
+
             it.runCommand(splitInput("list"))
             check.append("""
-                Name:  Filepath:
+                name:  filepath:
                 a      test1
                 b      test2
             """.trimIndent())

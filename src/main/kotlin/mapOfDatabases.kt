@@ -2,7 +2,6 @@ import java.io.File
 import java.lang.Integer.max
 
 data class MapOfDatabases(val databases: MutableMap<String, Database>) {
-    private val listOfCommands = listOf("contains", "get", "Get", "add", "erase", "Erase")
 
     fun runCommand(args: List<String>) {
         val command = args[0]
@@ -38,7 +37,7 @@ data class MapOfDatabases(val databases: MutableMap<String, Database>) {
             "list" -> printAllOpenDB()
 
             else -> {
-                if (arguments.isEmpty() || command !in listOfCommands) {
+                if (arguments.isEmpty()) {
                     incorrectInputErrorMessage()
                     return
                 }
@@ -138,7 +137,6 @@ data class MapOfDatabases(val databases: MutableMap<String, Database>) {
         }
         val databaseName = args[0]
         if (!exist(databaseName)) {
-            notExistErrorMessage(databaseName)
             return
         }
         val file = File(databases[args[0]]!!.filepath)
@@ -195,7 +193,7 @@ data class MapOfDatabases(val databases: MutableMap<String, Database>) {
 
     private fun printAllOpenDB() {
         if (databases.isEmpty()) {
-            println("No open databases")
+            println("no open databases")
             return
         }
         var maxLen = 6
@@ -203,8 +201,8 @@ data class MapOfDatabases(val databases: MutableMap<String, Database>) {
             maxLen = max(maxLen, it.key.length)
         }
         val sb = StringBuilder()
-        sb.append("Name:".padEnd(maxLen + 1))
-        sb.append("Filepath:\n")
+        sb.append("name:".padEnd(maxLen + 1))
+        sb.append("filepath:\n")
         databases.forEach {
             sb.append(it.key.padEnd(maxLen + 1))
             sb.append(it.value.filepath)

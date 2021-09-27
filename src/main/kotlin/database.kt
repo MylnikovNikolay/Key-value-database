@@ -4,24 +4,20 @@ data class Database(val filepath: String, val data: MutableMap <String, String>)
         val command = args[0]
         val arguments = args.drop(1)
         when (command) {
-            "contains" -> {
-                containsKey(arguments)
-            }
-            "get" -> {
-                getByKey(arguments)
-            }
-            "Get" -> {
-                printKeysByValue(arguments)
-            }
-            "add" -> {
-                addByKey(arguments)
-            }
-            "erase" -> {
-                eraseByKey(arguments)
-            }
-            "Erase" -> {
-                eraseByValue(arguments)
-            }
+            "contains" -> containsKey(arguments)
+
+            "get" -> getByKey(arguments)
+
+            "Get" -> printKeysByValue(arguments)
+
+            "add" -> addByKey(arguments)
+
+            "erase" -> eraseByKey(arguments)
+
+            "Erase" -> eraseByValue(arguments)
+
+            "entries" -> printAllEntries()
+
             else -> incorrectInputErrorMessage()
         }
     }
@@ -94,6 +90,16 @@ data class Database(val filepath: String, val data: MutableMap <String, String>)
         val keys = getKeysByValue(args[0])
         keys.forEach {
             data.remove(it)
+        }
+    }
+
+    private fun printAllEntries() {
+        if (data.isEmpty()) {
+            println("empty")
+            return
+        }
+        data.forEach {
+            println("${it.key} -> ${it.value}")
         }
     }
 }

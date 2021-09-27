@@ -14,7 +14,7 @@ fun runCommand(input: String, mapOfDatabases: MapOfDatabases): Boolean {
 
     if (command[0] == "exit") {
         if (mapOfDatabases.databases.isNotEmpty()) {
-            println("Some databases are still open")
+            println("some databases are still open")
             return false
         }
         return true
